@@ -1,7 +1,55 @@
 import * as React from 'react';
 import './game.css';
 
-function Square(props: { value: string | null, onClick: () => void }) {
+type SquareItem = string | null;
+interface GameState {
+    squares: SquareItem[];
+    xIsNext: boolean;
+}
+
+class GameStateImpl implements GameState {
+    private static lines = [
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8],
+        [0, 3, 6],
+        [1, 4, 7],
+        [2, 5, 8],
+        [0, 4, 8],
+        [2, 4, 6],
+    ];
+
+    constructor(public squares: SquareItem[] = Array(9).fill(null), public xIsNext: boolean = true) {
+        this.place = this.place.bind(this);
+        this.calculateWinner = this.calculateWinner.bind(this);
+    }
+
+    calculateWinner(): SquareItem {
+        for (const l of GameStateImpl.lines) {
+            const [a, b, c] = l;
+            if (this.squares[a] && this.squares[a] === this.squares[b] && this.squares[b] === this.squares[c]) {
+                return this.squares[a];
+            }
+        }
+        return null;
+    }
+
+    next = () => {
+        return this.xIsNext ? 'X' : 'O';
+    }
+
+    place(i: number): [boolean, GameStateImpl] {
+        if (this.squares[i] || this.calculateWinner()) {
+            return [false, this];
+        } else {
+            const squares = this.squares.slice();
+            squares[i] = this.next();
+            return [true, new GameStateImpl(squares, !this.xIsNext)];
+        }
+    }
+}
+
+function Square(props: { value: SquareItem, onClick: () => void }) {
     return (
         <button className="square" onClick={props.onClick}>
             {props.value}
@@ -9,17 +57,10 @@ function Square(props: { value: string | null, onClick: () => void }) {
     );
 }
 
-class Board extends React.Component<{}, { squares: (string | null)[], xIsNext: boolean }> {
+class Board extends React.Component<{}, GameStateImpl> {
     constructor() {
         super();
-        this.state = {
-            squares: Array(9).fill(null),
-            xIsNext: true,
-        };
-    }
-
-    next(): string {
-        return this.state.xIsNext ? 'X' : 'O';
+        this.state = new GameStateImpl();
     }
 
     renderSquare(i: number) {
@@ -27,18 +68,15 @@ class Board extends React.Component<{}, { squares: (string | null)[], xIsNext: b
     }
 
     handleClick(i: number) {
-        if (this.state.squares[i] || calculateWinner(this.state.squares)) {
-            return;
-        } else {
-            const squares = this.state.squares.slice();
-            squares[i] = this.next();
-            this.setState({ squares: squares, xIsNext: !this.state.xIsNext });
+        const [changed, newState] = this.state.place(i);
+        if (changed) {
+            this.setState(newState);
         }
     }
 
     render() {
-        const winner = calculateWinner(this.state.squares)
-        const status = !!winner ? `Winner: ${winner}` : `Next player: ${this.next()}`;
+        const winner = this.state.calculateWinner();
+        const status = !!winner ? `Winner: ${winner}` : `Next player: ${this.state.next()}`;
 
         return (
             <div>
@@ -63,27 +101,8 @@ class Board extends React.Component<{}, { squares: (string | null)[], xIsNext: b
     }
 }
 
-function calculateWinner(squares: (string | null)[]): string | null {
-    const lines = [
-        [0, 1, 2],
-        [3, 4, 5],
-        [6, 7, 8],
-        [0, 3, 6],
-        [1, 4, 7],
-        [2, 5, 8],
-        [0, 4, 8],
-        [2, 4, 6],
-    ];
-    for (const l of lines) {
-        const [a, b, c] = l;
-        if (squares[a] && squares[a] === squares[b] && squares[b] === squares[c]) {
-            return squares[a];
-        }
-    }
-    return null;
-}
-
 export class Game extends React.Component<{}, never> {
+
     render() {
         return (
             <div className="game">
