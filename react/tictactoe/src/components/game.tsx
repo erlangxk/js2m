@@ -123,8 +123,17 @@ export class Game extends React.Component<{}, History> {
     }
 
     moves() {
-        return this.state.items.map((s, idx) =>
-            <li key={idx}><a href="#" onClick={() => this.jump(idx)}>jump back to {idx}</a></li>
+        return this.state.items.map((s, idx) => {
+            if (idx === this.state.index) {
+                return (
+                    <li key={idx} className="current">
+                        <a href="#" onClick={() => this.jump(idx)}>jump back to {idx}</a>
+                    </li>
+                );
+            } else {
+                return (<li key={idx}><a href="#" onClick={() => this.jump(idx)}>jump back to {idx}</a></li>);
+            }
+        }
         );
     }
 
