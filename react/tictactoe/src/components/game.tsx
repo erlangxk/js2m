@@ -47,6 +47,11 @@ class GameStateImpl implements GameState {
             return [true, new GameStateImpl(squares, !this.xIsNext)];
         }
     }
+
+    status(): string {
+        const winner = this.calculateWinner();
+        return !!winner ? `Winner: ${winner}` : `Next player: ${this.next()}`;
+    }
 }
 
 function Square(props: { value: SquareItem, onClick: () => void }) {
@@ -57,60 +62,68 @@ function Square(props: { value: SquareItem, onClick: () => void }) {
     );
 }
 
-class Board extends React.Component<{}, GameStateImpl> {
-    constructor() {
-        super();
-        this.state = new GameStateImpl();
+function Board(props: { value: GameStateImpl, onClick: (i: number, gameState: GameStateImpl) => void }) {
+    function renderSquare(i: number) {
+        return <Square value={props.value.squares[i]} onClick={() => props.onClick(i, props.value)} />;
     }
 
-    renderSquare(i: number) {
-        return <Square value={this.state.squares[i]} onClick={() => this.handleClick(i)} />;
-    }
-
-    handleClick(i: number) {
-        const [changed, newState] = this.state.place(i);
-        if (changed) {
-            this.setState(newState);
-        }
-    }
-
-    render() {
-        const winner = this.state.calculateWinner();
-        const status = !!winner ? `Winner: ${winner}` : `Next player: ${this.state.next()}`;
-
-        return (
-            <div>
-                <div className="status">{status}</div>
-                <div className="board-row">
-                    {this.renderSquare(0)}
-                    {this.renderSquare(1)}
-                    {this.renderSquare(2)}
-                </div>
-                <div className="board-row">
-                    {this.renderSquare(3)}
-                    {this.renderSquare(4)}
-                    {this.renderSquare(5)}
-                </div>
-                <div className="board-row">
-                    {this.renderSquare(6)}
-                    {this.renderSquare(7)}
-                    {this.renderSquare(8)}
-                </div>
+    return (
+        <div>
+            <div className="board-row">
+                {renderSquare(0)}
+                {renderSquare(1)}
+                {renderSquare(2)}
             </div>
-        );
-    }
+            <div className="board-row">
+                {renderSquare(3)}
+                {renderSquare(4)}
+                {renderSquare(5)}
+            </div>
+            <div className="board-row">
+                {renderSquare(6)}
+                {renderSquare(7)}
+                {renderSquare(8)}
+            </div>
+        </div>
+    );
+
 }
 
-export class Game extends React.Component<{}, never> {
+interface History {
+    items: GameStateImpl[];
+}
+
+export class Game extends React.Component<{}, History> {
+    newest: GameStateImpl;
+    constructor() {
+        super();
+        this.state = {
+            items: [new GameStateImpl()]
+        };
+        this.onClick = this.onClick.bind(this);
+        this.last = this.last.bind(this);
+        this.newest = this.state.items[this.state.items.length - 1];
+    }
+
+    last(): GameStateImpl {
+        return this.state.items[this.state.items.length - 1];
+    }
+
+    onClick(i: number, gameState: GameStateImpl): void {
+        const [changed, newState] = gameState.place(i);
+        if (changed) {
+            this.setState({ items: [...this.state.items, newState] });
+        }
+    }
 
     render() {
         return (
             <div className="game">
                 <div className="game-board">
-                    <Board />
+                    <Board value={this.last()} onClick={this.onClick} />
                 </div>
                 <div className="game-info">
-                    <div>{/*status*/}</div>
+                    <div>{this.last().status()}</div>
                     <ol>{/*TODO*/}</ol>
                 </div>
             </div>
