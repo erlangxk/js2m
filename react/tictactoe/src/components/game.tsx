@@ -64,29 +64,18 @@ function Square(props: { value: SquareItem, onClick: () => void }) {
 
 function Board(props: { value: GameStateImpl, onClick: (i: number, gameState: GameStateImpl) => void }) {
     function renderSquare(i: number) {
-        return <Square value={props.value.squares[i]} onClick={() => props.onClick(i, props.value)} />;
+        return <Square key={i} value={props.value.squares[i]} onClick={() => props.onClick(i, props.value)} />;
+    }
+
+    function renderRow(arr: number[], idx: number) {
+        return (<div className="board-row" key={idx}>{arr.map(v => renderSquare(v))}</div>);
     }
 
     return (
         <div>
-            <div className="board-row">
-                {renderSquare(0)}
-                {renderSquare(1)}
-                {renderSquare(2)}
-            </div>
-            <div className="board-row">
-                {renderSquare(3)}
-                {renderSquare(4)}
-                {renderSquare(5)}
-            </div>
-            <div className="board-row">
-                {renderSquare(6)}
-                {renderSquare(7)}
-                {renderSquare(8)}
-            </div>
+            {[[0, 1, 2], [3, 4, 5], [6, 7, 8]].map((arr, idx) => renderRow(arr, idx))}
         </div>
     );
-
 }
 
 interface History {
