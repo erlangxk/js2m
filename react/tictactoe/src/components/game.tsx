@@ -91,33 +91,35 @@ function Board(props: { value: GameStateImpl, onClick: (i: number, gameState: Ga
 
 interface History {
     items: GameStateImpl[];
+    index: number;
 }
 
 export class Game extends React.Component<{}, History> {
     constructor() {
         super();
         this.state = {
-            items: [new GameStateImpl()]
+            items: [new GameStateImpl()],
+            index: 0,
         };
         this.onClick = this.onClick.bind(this);
-        this.last = this.last.bind(this);
+        this.current = this.current.bind(this);
         this.moves = this.moves.bind(this);
     }
 
-    last(): GameStateImpl {
-        return this.state.items[this.state.items.length - 1];
+    current(): GameStateImpl {
+        return this.state.items[this.state.index];
     }
 
     onClick(i: number, gameState: GameStateImpl): void {
         const [changed, newState] = gameState.place(i);
         if (changed) {
-            this.setState({ items: [...this.state.items, newState] });
+            const root = this.state.items.slice(0, this.state.index + 1);
+            this.setState({ items: [...root, newState], index: root.length });
         }
     }
 
     jump(idx: number): void {
-        const newItems = this.state.items.slice(0, idx + 1);
-        this.setState({ items: newItems });
+        this.setState({ items: this.state.items, index: idx });
     }
 
     moves() {
@@ -130,10 +132,10 @@ export class Game extends React.Component<{}, History> {
         return (
             <div className="game">
                 <div className="game-board">
-                    <Board value={this.last()} onClick={this.onClick} />
+                    <Board value={this.current()} onClick={this.onClick} />
                 </div>
                 <div className="game-info">
-                    <div>{this.last().status()}</div>
+                    <div>{this.current().status()}</div>
                     <ol>{this.moves()}</ol>
                 </div>
             </div>
