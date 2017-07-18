@@ -94,7 +94,6 @@ interface History {
 }
 
 export class Game extends React.Component<{}, History> {
-    newest: GameStateImpl;
     constructor() {
         super();
         this.state = {
@@ -102,7 +101,6 @@ export class Game extends React.Component<{}, History> {
         };
         this.onClick = this.onClick.bind(this);
         this.last = this.last.bind(this);
-        this.newest = this.state.items[this.state.items.length - 1];
     }
 
     last(): GameStateImpl {
