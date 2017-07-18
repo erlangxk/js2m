@@ -101,6 +101,7 @@ export class Game extends React.Component<{}, History> {
         };
         this.onClick = this.onClick.bind(this);
         this.last = this.last.bind(this);
+        this.moves = this.moves.bind(this);
     }
 
     last(): GameStateImpl {
@@ -114,6 +115,17 @@ export class Game extends React.Component<{}, History> {
         }
     }
 
+    jump(idx: number): void {
+        const newItems = this.state.items.slice(0, idx + 1);
+        this.setState({ items: newItems });
+    }
+
+    moves() {
+        return this.state.items.map((s, idx) =>
+            <li key={idx}><a href="#" onClick={() => this.jump(idx)}>jump back to {idx}</a></li>
+        );
+    }
+
     render() {
         return (
             <div className="game">
@@ -122,7 +134,7 @@ export class Game extends React.Component<{}, History> {
                 </div>
                 <div className="game-info">
                     <div>{this.last().status()}</div>
-                    <ol>{/*TODO*/}</ol>
+                    <ol>{this.moves()}</ol>
                 </div>
             </div>
         );
