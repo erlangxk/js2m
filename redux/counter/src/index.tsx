@@ -4,15 +4,24 @@ import { createStore } from 'redux';
 import { reducer } from './reducers'
 import { Counter } from './components/Counter'
 
+import { connect, Provider } from 'react-redux'
+
 const store = createStore(reducer, 0);
+function mapStateToProps(state: number) {
+    return { value: state };
+}
 
-const render = () => ReactDOM.render(
-    <Counter value={store.getState()}
-        onIncrement={() => store.dispatch({ type: 'INCREMENT' })}
-        onDecrement={() => store.dispatch({ type: 'DECREMENT' })} />,
+function mapDispatchToProps(dispatch: any) {
+    return {
+        onIncrement: () => dispatch({ type: 'INCREMENT' }),
+        onDecrement: () => dispatch({ type: 'DECREMENT' }),
+    }
+}
 
-    document.getElementById('root')
+const CounterX=connect(mapStateToProps, mapDispatchToProps)(Counter);
+
+ReactDOM.render(
+    <Provider store={store}>
+        <CounterX />
+    </Provider>, document.getElementById('root')
 );
-
-render();
-store.subscribe(render);
