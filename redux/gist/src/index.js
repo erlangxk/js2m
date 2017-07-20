@@ -14,12 +14,21 @@ function counter(state, action) {
 }
 
 let store = createStore(counter, 1000);
+//store.subscribe(() => console.log(store.getState()));
 
-store.subscribe(() => console.log(store.getState()));
+let next = store.dispatch
 
-store.dispatch({
+store.dispatch = function (action) {
+    console.log('dispatching', action);
+    let result = next(action);
+    console.log('next state', store.getState());
+    return result;
+}
+
+let r=store.dispatch({
     type: 'INCREMENT'
 });
+console.log("result get from store.dispatch", r);
 store.dispatch({
     type: 'INCREMENT'
 });
