@@ -15,10 +15,13 @@ function mapDispatchToProps(dispatch: any) {
     return {
         onIncrement: () => dispatch({ type: 'INCREMENT' }),
         onDecrement: () => dispatch({ type: 'DECREMENT' }),
+        incrementAsync: function () {
+            setTimeout(() => dispatch({ type: 'INCREMENT' }), 3000);
+        }
     }
 }
 
-const CounterX=connect(mapStateToProps, mapDispatchToProps)(Counter);
+const CounterX = connect(mapStateToProps, mapDispatchToProps)(Counter);
 
 ReactDOM.render(
     <Provider store={store}>

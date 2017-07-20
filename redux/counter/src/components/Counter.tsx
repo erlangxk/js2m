@@ -1,16 +1,17 @@
 import * as React from 'react';
+interface CounterProps {
+  value: number;
+  onIncrement: () => void;
+  onDecrement: () => void;
+  incrementAsync: () => void;
+}
 
-export function Counter(props: { value: number, onIncrement: () => void, onDecrement: () => void }) {
+export function Counter(props: CounterProps) {
   function incrementIfOdd() {
     if (props.value % 2 != 0) {
       props.onIncrement()
     }
   }
-
-  function incrementAsync() {
-    setTimeout(props.onIncrement, 3000);
-  }
-
   return (
     <p>
       Clicked: {props.value} times
@@ -27,7 +28,7 @@ export function Counter(props: { value: number, onIncrement: () => void, onDecre
         Increment if odd
         </button>
       {' '}
-      <button onClick={incrementAsync}>
+      <button onClick={props.incrementAsync}>
         Increment async
         </button>
     </p>
