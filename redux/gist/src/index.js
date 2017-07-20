@@ -1,5 +1,6 @@
 import {
-    createStore
+    createStore,
+    applyMiddleware
 } from 'redux'
 
 function counter(state, action) {
@@ -13,34 +14,33 @@ function counter(state, action) {
     }
 }
 
-let store = createStore(counter, 1000);
-//store.subscribe(() => console.log(store.getState()));
+const increment = {
+    type: 'INCREMENT'
+};
+const decrement = {
+    type: 'DECREMENT'
+};
 
-let next = store.dispatch
+function createAction(type) {
+    return {
+        type
+    }
+}
 
-store.dispatch = function (action) {
+
+const logger = store => next => action => {
     console.log('dispatching', action);
     let result = next(action);
     console.log('next state', store.getState());
     return result;
 }
 
-let r=store.dispatch({
-    type: 'INCREMENT'
-});
-console.log("result get from store.dispatch", r);
-store.dispatch({
-    type: 'INCREMENT'
-});
-store.dispatch({
-    type: 'INCREMENT'
-});
-store.dispatch({
-    type: 'INCREMENT'
-});
-store.dispatch({
-    type: 'DECREMENT'
-});
-store.dispatch({
-    type: 'unknown'
-});
+let store = createStore(counter, 1000, applyMiddleware(logger));
+store.subscribe(() => console.log(store.getState()));
+
+store.dispatch(increment);
+store.dispatch(increment);
+store.dispatch(increment);
+store.dispatch(increment);
+store.dispatch(decrement);
+store.dispatch(createAction('unknown'));
