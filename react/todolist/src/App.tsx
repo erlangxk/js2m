@@ -1,17 +1,15 @@
 import * as React from 'react';
 
-import { TodoStatusU, TodoInputU, TodoListU } from './components/TodoUI';
-import { item } from './components/TodoState';
+import { TodoListU } from './components/TodoList';
 
-const items = [item('idsfsfsfsf', 'text1'), item('id2', 'textssssssssssssss')];
+import { item } from './components/TodoItem';
+const items = [item('idsfsfsfsf', 'text1', true), item('id2', 'textssssssssssssss', false)];
 
 class App extends React.Component<{}, {}> {
   render() {
     return (
       <div>
-        <TodoInputU value="input" />
-        <TodoListU value={items}/>
-        <TodoStatusU />
+        <TodoListU items={items} />
       </div>
     );
   }
