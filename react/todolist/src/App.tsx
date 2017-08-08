@@ -1,14 +1,18 @@
 import * as React from 'react';
 import { TodoListU } from './components/TodoList';
 import { item, TodoItem } from './components/TodoItem';
+import v1 = require('uuid/v1');
 
-const uuidv1 = require('uuid/v1');
+enum Filter {
+  All, Completed, Active
+}
 
-class App extends React.Component<{}, { items: TodoItem[] }> {
+class App extends React.Component<{}, { items: TodoItem[], filter: Filter }> {
   constructor() {
     super();
     this.state = {
-      items: [item('idsfsfsfsf', 'text1', true), item('id2', 'textssssssssssssss', false)]
+      items: [item('idsfsfsfsf', 'text1', true), item('id2', 'textssssssssssssss', false)],
+      filter: Filter.All
     };
     this.handleClick = this.handleClick.bind(this);
   }
@@ -39,7 +43,7 @@ class App extends React.Component<{}, { items: TodoItem[] }> {
 
   handleAddTodo = (value: string) => {
     let items = this.state.items.slice();
-    items.push(item(uuidv1(), value, false));
+    items.push(item(v1(), value, false));
     this.setState({ items: items });
   }
 
@@ -54,6 +58,35 @@ class App extends React.Component<{}, { items: TodoItem[] }> {
     }
   }
 
+  showAll = () => {
+    if (this.state.filter !== Filter.All) {
+      this.setState({ ...this.state, filter: Filter.All });
+    }
+  }
+
+  showActive = () => {
+    if (this.state.filter !== Filter.Active) {
+      this.setState({ ...this.state, filter: Filter.Active });
+    }
+  }
+
+  showCompleted = () => {
+    if (this.state.filter !== Filter.Completed) {
+      this.setState({ ...this.state, filter: Filter.Completed });
+    }
+  }
+
+  show = () => {
+    switch (this.state.filter) {
+      case Filter.Active:
+        return this.state.items.filter(function (i: TodoItem) { return !i.completed; });
+      case Filter.All:
+        return this.state.items;
+      default:
+        return this.state.items.filter(function (i: TodoItem) { return i.completed; });
+    }
+  }
+
   render() {
     return (
       <div >
@@ -64,9 +97,11 @@ class App extends React.Component<{}, { items: TodoItem[] }> {
           placeholder="What needs to be done?"
           onKeyDown={this.handleEnter}
         />
-        <TodoListU items={this.state.items} onClick={this.handleClick} />
-
+        <TodoListU items={this.show()} onClick={this.handleClick} />
         <span>{this.numOfActiveItems()} left</span>
+        <input type="button" value="Show All" onClick={this.showAll} />
+        <input type="button" value="Only Completed" onClick={this.showCompleted} />
+        <input type="button" value="Only Active" onClick={this.showActive} />
       </div >
     );
   }
