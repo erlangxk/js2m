@@ -8,13 +8,17 @@ enum Filter {
 }
 
 class App extends React.Component<{}, { items: TodoItem[], filter: Filter }> {
-  constructor() {
-    super();
+
+  input: HTMLInputElement | undefined = undefined;
+
+  constructor(props: {}) {
+    super(props);
     this.state = {
       items: [item('idsfsfsfsf', 'text1', true), item('id2', 'textssssssssssssss', false)],
       filter: Filter.All
     };
     this.handleClick = this.handleClick.bind(this);
+    this.inputRefCb = this.inputRefCb.bind(this);
   }
 
   numOfActiveItems = () => {
@@ -48,31 +52,33 @@ class App extends React.Component<{}, { items: TodoItem[], filter: Filter }> {
   }
 
   handleEnter = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.keyCode === 13) {
-      let input = document!.getElementById('newTodo') as HTMLInputElement;
-      let text = input.value;
-      if (text != null) {
+    if (event.keyCode === 13 && this.input) {
+      let text = this.input.value;
+      if (text) {
         this.handleAddTodo(text);
-        input.value = '';
+        this.input.value = '';
       }
     }
   }
 
   showAll = () => {
     if (this.state.filter !== Filter.All) {
-      this.setState({ ...this.state, filter: Filter.All });
+      const newState = { ...this.state, filter: Filter.All };
+      this.setState(newState);
     }
   }
 
   showActive = () => {
     if (this.state.filter !== Filter.Active) {
-      this.setState({ ...this.state, filter: Filter.Active });
+      const newState = { ...this.state, filter: Filter.Active };
+      this.setState(newState);
     }
   }
 
   showCompleted = () => {
     if (this.state.filter !== Filter.Completed) {
-      this.setState({ ...this.state, filter: Filter.Completed });
+      const newState = { ...this.state, filter: Filter.Completed };
+      this.setState(newState);
     }
   }
 
@@ -87,6 +93,10 @@ class App extends React.Component<{}, { items: TodoItem[], filter: Filter }> {
     }
   }
 
+  inputRefCb(input: HTMLInputElement) {
+    this.input = input;
+  }
+
   render() {
     return (
       <div >
@@ -96,6 +106,7 @@ class App extends React.Component<{}, { items: TodoItem[], filter: Filter }> {
           name="newTodo"
           placeholder="What needs to be done?"
           onKeyDown={this.handleEnter}
+          ref={this.inputRefCb}
         />
         <TodoListU items={this.show()} onClick={this.handleClick} />
         <span>{this.numOfActiveItems()} left</span>
