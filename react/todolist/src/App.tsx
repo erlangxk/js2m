@@ -3,35 +3,34 @@ import { TodoListU } from './components/TodoList';
 import { newItem, TodoItem } from './components/TodoItem';
 import { InputRow } from './components/InputRow';
 import { StatusRow, Filter } from './components/StatusRow';
-import v1 = require('uuid/v1');
+import { Actions } from './reducers/todolist';
 
-class App extends React.Component<{}, { items: TodoItem[], filter: Filter }> {
+export const initState = {
+  items: [newItem('idsfsfsfsf', 'text1', true), newItem('id2', 'textssssssssssssss', false)],
+  filter: Filter.All
+};
+
+export class App extends React.Component<{ store: any }, never> {
 
   input: HTMLInputElement | undefined = undefined;
 
-  constructor(props: {}) {
+  constructor(props: { store: any }) {
     super(props);
-    this.state = {
-      items: [newItem('idsfsfsfsf', 'text1', true), newItem('id2', 'textssssssssssssss', false)],
-      filter: Filter.All
-    };
     this.handleClick = this.handleClick.bind(this);
     this.inputRefCb = this.inputRefCb.bind(this);
   }
 
   numOfActiveItems = () => {
-    return this.state.items.reduce((accu: number, cv: TodoItem) => cv.completed ? accu : accu + 1, 0);
+    const state = this.props.store.getState();
+    return state.items.reduce((accu: number, cv: TodoItem) => cv.completed ? accu : accu + 1, 0);
   }
 
   handleClick(todoItem: TodoItem) {
-    const newitems = this.state.items.map((value: TodoItem) => value.id !== value.id ? value : value.toggleComplete());
-    this.setState({ items: newitems });
+    this.props.store.dispatch({ type: Actions.ToggleItem, itemId: todoItem.id });
   }
 
   handleAddTodo = (value: string) => {
-    let items = this.state.items.slice();
-    items.push(newItem(v1(), value, false));
-    this.setState({ items: items });
+    this.props.store.dispatch({ type: Actions.AddItem, text: value });
   }
 
   handleEnter = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -45,20 +44,18 @@ class App extends React.Component<{}, { items: TodoItem[], filter: Filter }> {
   }
 
   onShow = (filter: Filter) => {
-    if (this.state.filter !== filter) {
-      const newState = { ...this.state, filter };
-      this.setState(newState);
-    }
+    this.props.store.dispatch({ type: Actions.ResetFilter, filter });
   }
 
   show = () => {
-    switch (this.state.filter) {
+    const state = this.props.store.getState();
+    switch (state.filter) {
       case Filter.Active:
-        return this.state.items.filter(function (i: TodoItem) { return !i.completed; });
+        return state.items.filter(function (i: TodoItem) { return !i.completed; });
       case Filter.All:
-        return this.state.items;
+        return state.items;
       default:
-        return this.state.items.filter(function (i: TodoItem) { return i.completed; });
+        return state.items.filter(function (i: TodoItem) { return i.completed; });
     }
   }
 
@@ -76,5 +73,3 @@ class App extends React.Component<{}, { items: TodoItem[], filter: Filter }> {
     );
   }
 }
-
-export default App;

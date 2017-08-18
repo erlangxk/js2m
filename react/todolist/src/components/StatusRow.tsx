@@ -1,7 +1,9 @@
 import * as React from 'react';
 
 export enum Filter {
-    All, Completed, Active
+    All = 'FILTER_ALL',
+    Completed = 'FILTER_COMPLETED',
+    Active = 'FILTER_ACTIVE'
 }
 
 interface StatusRowProps {
