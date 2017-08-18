@@ -20,26 +20,11 @@ class App extends React.Component<{}, { items: TodoItem[], filter: Filter }> {
   }
 
   numOfActiveItems = () => {
-    function cb(accu: number, cv: TodoItem) {
-      if (cv.completed) {
-        return accu;
-      } else {
-        return accu + 1;
-      }
-    }
-    return this.state.items.reduce(cb, 0);
+    return this.state.items.reduce((accu: number, cv: TodoItem) => cv.completed ? accu : accu + 1, 0);
   }
 
   handleClick(todoItem: TodoItem) {
-    let newitems: TodoItem[] = [];
-    function cb(xitem: TodoItem, index: number) {
-      if (xitem.id !== todoItem.id) {
-        newitems.push(xitem);
-      } else {
-        newitems.push(todoItem.toggleComplete());
-      }
-    }
-    this.state.items.forEach(cb);
+    const newitems = this.state.items.map((value: TodoItem) => value.id !== value.id ? value : value.toggleComplete());
     this.setState({ items: newitems });
   }
 
