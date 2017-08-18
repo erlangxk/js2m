@@ -1,25 +1,14 @@
 import * as React from 'react';
 
-export interface TodoItem {
-    completed: boolean;
-    text: string;
-    id: string;
-    toggleComplete: () => TodoItem;
-}
-
-class TodoItemImpl implements TodoItem {
+export class TodoItem {
     constructor(
         public readonly id: string,
         public readonly text: string,
         public readonly completed: boolean = false) { }
 
     toggleComplete = () => {
-        return new TodoItemImpl(this.id, this.text, !this.completed);
+        return new TodoItem(this.id, this.text, !this.completed);
     }
-}
-
-export function newItem(id: string, text: string, completed: boolean): TodoItem {
-    return new TodoItemImpl(id, text, completed);
 }
 
 export function TodoItemU(props: { item: TodoItem, onClick: (todoItem: TodoItem) => void }) {

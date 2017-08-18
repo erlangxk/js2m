@@ -1,4 +1,4 @@
-import { TodoItem, newItem } from '../components/TodoItem';
+import { TodoItem } from '../components/TodoItem';
 import { Filter } from '../components/StatusRow';
 
 import v1 = require('uuid/v1');
@@ -32,7 +32,7 @@ function toggleComplete(items: TodoItem[], itemId: string): TodoItem[] {
 export function todoListReducer(state: TodoItem[], action: Action): TodoItem[] {
     switch (action.type) {
         case Actions.AddItem:
-            return [...state,  newItem(v1(), action.text, false)];
+            return [...state, new TodoItem(v1(), action.text, false)];
         case Actions.ToggleItem:
             return toggleComplete(state, action.itemId);
         default:
@@ -57,12 +57,4 @@ export function reducer(state: State, action: Action) {
         items: todoListReducer(state.items, action),
         filter: filterReducer(state.filter, action),
     }
-}
-
-export function numOfActiveItems(items: TodoItem[]) {
-    return items.reduce(
-        function (accu: number, item: TodoItem) {
-            return item.completed ? accu : accu + 1;
-        },
-        0);
 }

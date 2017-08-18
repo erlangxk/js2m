@@ -1,17 +1,16 @@
 import * as React from 'react';
 import { TodoListU } from './components/TodoList';
-import { newItem, TodoItem } from './components/TodoItem';
+import { TodoItem } from './components/TodoItem';
 import { InputRow } from './components/InputRow';
 import { StatusRow, Filter } from './components/StatusRow';
 import { Actions } from './reducers/todolist';
 
 export const initState = {
-  items: [newItem('idsfsfsfsf', 'text1', true), newItem('id2', 'textssssssssssssss', false)],
+  items: [new TodoItem('idsfsfsfsf', 'text1', true), new TodoItem('id2', 'textssssssssssssss', false)],
   filter: Filter.All
 };
 
 export function App(props: { store: any }) {
-
   let input: HTMLInputElement | undefined = undefined;
 
   function numOfActiveItems() {
