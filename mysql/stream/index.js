@@ -36,11 +36,7 @@ function* toCard(cards){
 function count(cards, accu){
     for(let c of cards){
         let v= accu.get(c)
-        if(!v){
-            v=1;
-        }else {
-            v=v+1;
-        }
+        v = v ? v+1 : 1
         accu.set(c,v);
     }
     return accu
