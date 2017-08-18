@@ -10,45 +10,39 @@ export const initState = {
   filter: Filter.All
 };
 
-export class App extends React.Component<{ store: any }, never> {
+export function App(props: { store: any }) {
 
-  input: HTMLInputElement | undefined = undefined;
+  let input: HTMLInputElement | undefined = undefined;
 
-  constructor(props: { store: any }) {
-    super(props);
-    this.handleClick = this.handleClick.bind(this);
-    this.inputRefCb = this.inputRefCb.bind(this);
-  }
-
-  numOfActiveItems = () => {
-    const state = this.props.store.getState();
+  function numOfActiveItems() {
+    const state = props.store.getState();
     return state.items.reduce((accu: number, cv: TodoItem) => cv.completed ? accu : accu + 1, 0);
   }
 
-  handleClick(todoItem: TodoItem) {
-    this.props.store.dispatch({ type: Actions.ToggleItem, itemId: todoItem.id });
+  function handleClick(todoItem: TodoItem) {
+    props.store.dispatch({ type: Actions.ToggleItem, itemId: todoItem.id });
   }
 
-  handleAddTodo = (value: string) => {
-    this.props.store.dispatch({ type: Actions.AddItem, text: value });
+  function handleAddTodo(value: string) {
+    props.store.dispatch({ type: Actions.AddItem, text: value });
   }
 
-  handleEnter = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.keyCode === 13 && this.input) {
-      let text = this.input.value;
+  function handleEnter(event: React.KeyboardEvent<HTMLInputElement>) {
+    if (event.keyCode === 13 && input) {
+      let text = input.value;
       if (text) {
-        this.handleAddTodo(text);
-        this.input.value = '';
+        handleAddTodo(text);
+        input.value = '';
       }
     }
   }
 
-  onShow = (filter: Filter) => {
-    this.props.store.dispatch({ type: Actions.ResetFilter, filter });
+  function onShow(filter: Filter) {
+    props.store.dispatch({ type: Actions.ResetFilter, filter });
   }
 
-  show = () => {
-    const state = this.props.store.getState();
+  function show() {
+    const state = props.store.getState();
     switch (state.filter) {
       case Filter.Active:
         return state.items.filter(function (i: TodoItem) { return !i.completed; });
@@ -59,17 +53,15 @@ export class App extends React.Component<{ store: any }, never> {
     }
   }
 
-  inputRefCb(input: HTMLInputElement) {
-    this.input = input;
+  function inputRefCb(inputElem: HTMLInputElement) {
+    input = inputElem;
   }
 
-  render() {
-    return (
-      <div >
-        <InputRow handleEnter={this.handleEnter} inputRefCb={this.inputRefCb} />
-        <TodoListU items={this.show()} onClick={this.handleClick} />
-        <StatusRow numOfActiveItems={this.numOfActiveItems} onShow={this.onShow} />
-      </div >
-    );
-  }
+  return (
+    <div >
+      <InputRow handleEnter={handleEnter} inputRefCb={inputRefCb} />
+      <TodoListU items={show()} onClick={handleClick} />
+      <StatusRow numOfActiveItems={numOfActiveItems} onShow={onShow} />
+    </div >
+  );
 }
