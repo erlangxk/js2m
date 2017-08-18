@@ -2,12 +2,8 @@ import * as React from 'react';
 import { TodoListU } from './components/TodoList';
 import { newItem, TodoItem } from './components/TodoItem';
 import { InputRow } from './components/InputRow';
-import { StatusRow } from './components/StatusRow';
+import { StatusRow, Filter } from './components/StatusRow';
 import v1 = require('uuid/v1');
-
-enum Filter {
-  All, Completed, Active
-}
 
 class App extends React.Component<{}, { items: TodoItem[], filter: Filter }> {
 
@@ -63,23 +59,9 @@ class App extends React.Component<{}, { items: TodoItem[], filter: Filter }> {
     }
   }
 
-  showAll = () => {
-    if (this.state.filter !== Filter.All) {
-      const newState = { ...this.state, filter: Filter.All };
-      this.setState(newState);
-    }
-  }
-
-  showActive = () => {
-    if (this.state.filter !== Filter.Active) {
-      const newState = { ...this.state, filter: Filter.Active };
-      this.setState(newState);
-    }
-  }
-
-  showCompleted = () => {
-    if (this.state.filter !== Filter.Completed) {
-      const newState = { ...this.state, filter: Filter.Completed };
+  onShow = (filter: Filter) => {
+    if (this.state.filter !== filter) {
+      const newState = { ...this.state, filter };
       this.setState(newState);
     }
   }
@@ -104,12 +86,7 @@ class App extends React.Component<{}, { items: TodoItem[], filter: Filter }> {
       <div >
         <InputRow handleEnter={this.handleEnter} inputRefCb={this.inputRefCb} />
         <TodoListU items={this.show()} onClick={this.handleClick} />
-        <StatusRow
-          numOfActiveItems={this.numOfActiveItems}
-          onShowActive={this.showActive}
-          onShowCompleted={this.showCompleted}
-          onShowAll={this.showAll}
-        />
+        <StatusRow numOfActiveItems={this.numOfActiveItems} onShow={this.onShow} />
       </div >
     );
   }

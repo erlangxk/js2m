@@ -1,19 +1,21 @@
 import * as React from 'react';
 
+export enum Filter {
+    All, Completed, Active
+}
+
 interface StatusRowProps {
     numOfActiveItems: () => number;
-    onShowAll: () => void;
-    onShowCompleted: () => void;
-    onShowActive: () => void;
+    onShow: (filter: Filter) => void;
 }
 
 export function StatusRow(props: StatusRowProps) {
     return (
         <div>
             <span>{props.numOfActiveItems()} left</span>
-            <input type="button" value="Show All" onClick={props.onShowAll} />
-            <input type="button" value="Only Completed" onClick={props.onShowCompleted} />
-            <input type="button" value="Only Active" onClick={props.onShowActive} />
+            <input type="button" value="Show All" onClick={() => props.onShow(Filter.All)} />
+            <input type="button" value="Only Completed" onClick={() => props.onShow(Filter.Completed)} />
+            <input type="button" value="Only Active" onClick={() => props.onShow(Filter.Active)} />
         </div>
     );
 }
