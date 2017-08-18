@@ -2,6 +2,7 @@ import * as React from 'react';
 import { TodoListU } from './components/TodoList';
 import { newItem, TodoItem } from './components/TodoItem';
 import { InputRow } from './components/InputRow';
+import { StatusRow } from './components/StatusRow';
 import v1 = require('uuid/v1');
 
 enum Filter {
@@ -103,12 +104,15 @@ class App extends React.Component<{}, { items: TodoItem[], filter: Filter }> {
       <div >
         <InputRow handleEnter={this.handleEnter} inputRefCb={this.inputRefCb} />
         <TodoListU items={this.show()} onClick={this.handleClick} />
-        <span>{this.numOfActiveItems()} left</span>
-        <input type="button" value="Show All" onClick={this.showAll} />
-        <input type="button" value="Only Completed" onClick={this.showCompleted} />
-        <input type="button" value="Only Active" onClick={this.showActive} />
+        <StatusRow
+          numOfActiveItems={this.numOfActiveItems}
+          onShowActive={this.showActive}
+          onShowCompleted={this.showCompleted}
+          onShowAll={this.showAll}
+        />
       </div >
     );
   }
 }
+
 export default App;
