@@ -18,7 +18,7 @@ class TodoItemImpl implements TodoItem {
     }
 }
 
-export function item(id: string, text: string, completed: boolean): TodoItem {
+export function newItem(id: string, text: string, completed: boolean): TodoItem {
     return new TodoItemImpl(id, text, completed);
 }
 

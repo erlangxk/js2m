@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { TodoListU } from './components/TodoList';
-import { item, TodoItem } from './components/TodoItem';
+import { newItem, TodoItem } from './components/TodoItem';
+import { InputRow } from './components/InputRow';
 import v1 = require('uuid/v1');
 
 enum Filter {
@@ -14,7 +15,7 @@ class App extends React.Component<{}, { items: TodoItem[], filter: Filter }> {
   constructor(props: {}) {
     super(props);
     this.state = {
-      items: [item('idsfsfsfsf', 'text1', true), item('id2', 'textssssssssssssss', false)],
+      items: [newItem('idsfsfsfsf', 'text1', true), newItem('id2', 'textssssssssssssss', false)],
       filter: Filter.All
     };
     this.handleClick = this.handleClick.bind(this);
@@ -47,7 +48,7 @@ class App extends React.Component<{}, { items: TodoItem[], filter: Filter }> {
 
   handleAddTodo = (value: string) => {
     let items = this.state.items.slice();
-    items.push(item(v1(), value, false));
+    items.push(newItem(v1(), value, false));
     this.setState({ items: items });
   }
 
@@ -100,14 +101,7 @@ class App extends React.Component<{}, { items: TodoItem[], filter: Filter }> {
   render() {
     return (
       <div >
-        <input
-          id="newTodo"
-          type="text"
-          name="newTodo"
-          placeholder="What needs to be done?"
-          onKeyDown={this.handleEnter}
-          ref={this.inputRefCb}
-        />
+        <InputRow handleEnter={this.handleEnter} inputRefCb={this.inputRefCb} />
         <TodoListU items={this.show()} onClick={this.handleClick} />
         <span>{this.numOfActiveItems()} left</span>
         <input type="button" value="Show All" onClick={this.showAll} />
@@ -117,5 +111,4 @@ class App extends React.Component<{}, { items: TodoItem[], filter: Filter }> {
     );
   }
 }
-
 export default App;
