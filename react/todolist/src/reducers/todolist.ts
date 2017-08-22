@@ -58,3 +58,18 @@ export function reducer(state: State, action: Action) {
         filter: filterReducer(state.filter, action),
     }
 }
+
+export function filterItems(items: TodoItem[], filter: Filter) {
+    switch (filter) {
+        case Filter.Active:
+            return items.filter(function (i: TodoItem) { return !i.completed; });
+        case Filter.All:
+            return items;
+        default:
+            return items.filter(function (i: TodoItem) { return i.completed; });
+    }
+}
+
+export function numOfActiveItems(items: TodoItem[]) {
+    return items.reduce((accu: number, cv: TodoItem) => cv.completed ? accu : accu + 1, 0);
+}

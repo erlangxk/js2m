@@ -3,7 +3,7 @@ import { TodoListU } from './components/TodoList';
 import { TodoItem } from './components/TodoItem';
 import { InputRow } from './components/InputRow';
 import { StatusRow, Filter } from './components/StatusRow';
-import { Actions } from './reducers/todolist';
+import { Actions, filterItems, numOfActiveItems } from './reducers/todolist';
 
 export const initState = {
   items: [new TodoItem('idsfsfsfsf', 'text1', true), new TodoItem('id2', 'textssssssssssssss', false)],
@@ -12,11 +12,6 @@ export const initState = {
 
 export function App(props: { store: any }) {
   let input: HTMLInputElement | undefined = undefined;
-
-  function numOfActiveItems() {
-    const state = props.store.getState();
-    return state.items.reduce((accu: number, cv: TodoItem) => cv.completed ? accu : accu + 1, 0);
-  }
 
   function handleClick(todoItem: TodoItem) {
     props.store.dispatch({ type: Actions.ToggleItem, itemId: todoItem.id });
@@ -40,18 +35,6 @@ export function App(props: { store: any }) {
     props.store.dispatch({ type: Actions.ResetFilter, filter });
   }
 
-  function show() {
-    const state = props.store.getState();
-    switch (state.filter) {
-      case Filter.Active:
-        return state.items.filter(function (i: TodoItem) { return !i.completed; });
-      case Filter.All:
-        return state.items;
-      default:
-        return state.items.filter(function (i: TodoItem) { return i.completed; });
-    }
-  }
-
   function inputRefCb(inputElem: HTMLInputElement) {
     input = inputElem;
   }
@@ -59,8 +42,15 @@ export function App(props: { store: any }) {
   return (
     <div >
       <InputRow handleEnter={handleEnter} inputRefCb={inputRefCb} />
-      <TodoListU items={show()} onClick={handleClick} />
-      <StatusRow numOfActiveItems={numOfActiveItems} onShow={onShow} />
+      <TodoListU
+        items={filterItems(props.store.getState().items, props.store.getState().filter)}
+        onClick={handleClick}
+      />
+      <StatusRow
+        numOfActiveItems={numOfActiveItems(props.store.getState().items)}
+        onShow={onShow}
+        currentFilter={props.store.getState().filter}
+      />
     </div >
   );
 }
