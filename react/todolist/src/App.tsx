@@ -3,19 +3,46 @@ import { TodoListU } from './components/TodoList';
 import { TodoItem } from './components/TodoItem';
 import { InputRow } from './components/InputRow';
 import { StatusRow, Filter } from './components/StatusRow';
-import { Actions, filterItems, numOfActiveItems } from './reducers/todolist';
+import { Actions, filterItems, numOfActiveItems, State } from './reducers/todolist';
+import { connect } from 'react-redux';
 
 export const initState = {
   items: [new TodoItem('idsfsfsfsf', 'text1', true), new TodoItem('id2', 'textssssssssssssss', false)],
   filter: Filter.All
 };
 
+function todoListMapStateToProps(state: State) {
+  return {
+    items: filterItems(state.items, state.filter)
+  };
+}
+const todoListMapDispatchToProps = (dispatch: any) => {
+  return {
+    onClick: (todoItem: TodoItem) => {
+      dispatch({ type: Actions.ToggleItem, itemId: todoItem.id });
+    }
+  };
+};
+
+const ToDoListWapper = connect(todoListMapStateToProps, todoListMapDispatchToProps)(TodoListU);
+
+function statusRowMapStateToProps(state: State) {
+  return {
+    numOfActiveItems: numOfActiveItems(state.items),
+    currentFilter: state.filter
+  };
+}
+
+const statusRowMapDispatchToProps = (dispath: any) => {
+  return {
+    onShow: (filter: Filter) => dispath({ type: Actions.ResetFilter, filter })
+  };
+};
+
+const StatusRowWrapper = connect(statusRowMapStateToProps, statusRowMapDispatchToProps)(StatusRow);
+
 export function App(props: { store: any }) {
   let input: HTMLInputElement | undefined = undefined;
-
-  function handleClick(todoItem: TodoItem) {
-    props.store.dispatch({ type: Actions.ToggleItem, itemId: todoItem.id });
-  }
 
   function handleAddTodo(value: string) {
     props.store.dispatch({ type: Actions.AddItem, text: value });
@@ -31,10 +58,6 @@ export function App(props: { store: any }) {
     }
   }
 
-  function onShow(filter: Filter) {
-    props.store.dispatch({ type: Actions.ResetFilter, filter });
-  }
-
   function inputRefCb(inputElem: HTMLInputElement) {
     input = inputElem;
   }
@@ -42,15 +65,8 @@ export function App(props: { store: any }) {
   return (
     <div >
       <InputRow handleEnter={handleEnter} inputRefCb={inputRefCb} />
-      <TodoListU
-        items={filterItems(props.store.getState().items, props.store.getState().filter)}
-        onClick={handleClick}
-      />
-      <StatusRow
-        numOfActiveItems={numOfActiveItems(props.store.getState().items)}
-        onShow={onShow}
-        currentFilter={props.store.getState().filter}
-      />
+      <ToDoListWapper />
+      <StatusRowWrapper />
     </div >
   );
 }

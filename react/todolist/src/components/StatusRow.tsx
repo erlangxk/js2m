@@ -12,33 +12,35 @@ interface StatusRowProps {
     onShow: (filter: Filter) => void;
 }
 
+const buttons = [[Filter.All, 'Show All'], [Filter.Completed, 'Only Complete'], [Filter.Active, 'Only Active']];
+
 export function StatusRow(props: StatusRowProps) {
+
     return (
         <div>
             <span>{props.numOfActiveItems} left</span>
             &nbsp;
-            <FilterButton currFilter={props.currentFilter} destFilter={Filter.All} onClick={props.onShow} />
-            &nbsp;
-            <FilterButton currFilter={props.currentFilter} destFilter={Filter.Completed} onClick={props.onShow} />
-            &nbsp;
-            <FilterButton currFilter={props.currentFilter} destFilter={Filter.Active} onClick={props.onShow} />
-            &nbsp;
+            {
+                buttons.map(function (e: [Filter, string]) {
+                    let [filter, value] = e;
+                    return (
+                        <FilterButton
+                            key={filter}
+                            active={props.currentFilter === filter}
+                            value={value}
+                            onClick={() => props.onShow(filter)}
+                        />
+                    );
+                })
+            }
         </div>
     );
 }
 
-function FilterButton(props: { currFilter: Filter, destFilter: Filter, onClick: (filter: Filter) => void }) {
-    let value: string;
-    if (props.destFilter === Filter.All) {
-        value = 'Show All';
-    } else if (props.destFilter === Filter.Completed) {
-        value = 'Only Completed';
+function FilterButton(props: { active: boolean, value: string, onClick: () => void }) {
+    if (props.active) {
+        return (<span>{props.value}</span>);
     } else {
-        value = 'Only Active';
-    }
-    if (props.currFilter === props.destFilter) {
-        return (<span>{value}</span>);
-    } else {
-        return (<input type="button" value={value} onClick={() => props.onClick(props.destFilter)} />);
+        return (<input type="button" value={props.value} onClick={props.onClick} />);
     }
 }

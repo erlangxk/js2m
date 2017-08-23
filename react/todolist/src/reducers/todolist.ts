@@ -48,15 +48,15 @@ export function filterReducer(state: Filter, action: Action): Filter {
     }
 }
 
-interface State {
+export interface State {
     filter: Filter;
-    items: TodoItem[]
+    items: TodoItem[];
 }
 export function reducer(state: State, action: Action) {
     return {
         items: todoListReducer(state.items, action),
         filter: filterReducer(state.filter, action),
-    }
+    };
 }
 
 export function filterItems(items: TodoItem[], filter: Filter) {
