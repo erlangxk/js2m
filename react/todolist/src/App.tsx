@@ -33,38 +33,25 @@ function statusRowMapStateToProps(state: State) {
   };
 }
 
-const statusRowMapDispatchToProps = (dispath: any) => {
+const statusRowMapDispatchToProps = (dispatch: any) => {
   return {
-    onShow: (filter: Filter) => dispath({ type: Actions.ResetFilter, filter })
+    onShow: (filter: Filter) => dispatch({ type: Actions.ResetFilter, filter })
   };
 };
 
 const StatusRowWrapper = connect(statusRowMapStateToProps, statusRowMapDispatchToProps)(StatusRow);
 
-export function App(props: { store: any }) {
-  let input: HTMLInputElement | undefined = undefined;
+const inputRowMapDispatchToProps = (dispatch: any) => {
+  return {
+    handleAddTodo: (text: string) => dispatch({ type: Actions.AddItem, text })
+  };
+};
+const InputRowWapper = connect(null, inputRowMapDispatchToProps)(InputRow);
 
-  function handleAddTodo(value: string) {
-    props.store.dispatch({ type: Actions.AddItem, text: value });
-  }
-
-  function handleEnter(event: React.KeyboardEvent<HTMLInputElement>) {
-    if (event.keyCode === 13 && input) {
-      let text = input.value;
-      if (text) {
-        handleAddTodo(text);
-        input.value = '';
-      }
-    }
-  }
-
-  function inputRefCb(inputElem: HTMLInputElement) {
-    input = inputElem;
-  }
-
+export function App() {
   return (
     <div >
-      <InputRow handleEnter={handleEnter} inputRefCb={inputRefCb} />
+      <InputRowWapper />
       <ToDoListWapper />
       <StatusRowWrapper />
     </div >
