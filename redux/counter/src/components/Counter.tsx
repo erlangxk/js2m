@@ -4,14 +4,11 @@ interface CounterProps {
   onIncrement: () => void;
   onDecrement: () => void;
   incrementAsync: () => void;
+  incrementIfOdd: (value: number) => void;
 }
 
 export function Counter(props: CounterProps) {
-  function incrementIfOdd() {
-    if (props.value % 2 != 0) {
-      props.onIncrement()
-    }
-  }
+
   return (
     <p>
       Clicked: {props.value} times
@@ -24,7 +21,7 @@ export function Counter(props: CounterProps) {
         -
         </button>
       {' '}
-      <button onClick={incrementIfOdd}>
+      <button onClick={() => props.incrementIfOdd(props.value)}>
         Increment if odd
         </button>
       {' '}

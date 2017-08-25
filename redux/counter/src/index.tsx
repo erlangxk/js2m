@@ -17,6 +17,9 @@ function mapDispatchToProps(dispatch: any) {
         onDecrement: () => dispatch({ type: 'DECREMENT' }),
         incrementAsync: function () {
             setTimeout(() => dispatch({ type: 'INCREMENT' }), 3000);
+        },
+        incrementIfOdd: function (value: number) {
+            if (value % 2 != 0) dispatch({ type: 'INCREMENT' })
         }
     }
 }
