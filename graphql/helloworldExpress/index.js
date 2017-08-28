@@ -9,7 +9,7 @@ var schema = buildSchema(`
     type Query {
         quoteOfTheDay: String
         random: Float!
-        rollThreeDice:[Int]
+        rollDice(numDice:Int!, numSides:Int):[Int]
     }
 `);
 
@@ -20,8 +20,16 @@ var root = {
     random: () => {
         return Math.random();
     },
-    rollThreeDice: () => {
-        return [1, 2, 3].map(_ => 1 + Math.floor(Math.random() * 6));
+    rollDice: function ({
+        numDice,
+        numSides
+    }) {
+        var output = [];
+        for (var i = 0; i < numDice; i++) {
+            let n = Math.floor(Math.random() * (numSides || 6));
+            output.push(1 + n);
+        }
+        return output;
     },
 };
 
