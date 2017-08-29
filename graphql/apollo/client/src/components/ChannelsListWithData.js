@@ -4,6 +4,8 @@ import {
     graphql,
 } from 'react-apollo';
 
+import { AddChannelWithMutation } from './AddChannel';
+
 function ChannelList({data: {loading,error,channels}}){
   if(loading){
     return <p>Loading</p>;
@@ -12,13 +14,14 @@ function ChannelList({data: {loading,error,channels}}){
     return <p>{error.message}</p>;
   }
   return (
-    <ul>
-         {channels.map(ch => <li key={ch.id}>{ch.name}</li>)}
-    </ul>
+      <div className="channelsList">
+          <AddChannelWithMutation/>
+         {channels.map(ch => <div className={'channel '+(ch.id < 0 ? 'optimistic': '')} key={ch.id}>{ch.name}</div>)}
+      </div>
   );
 }
 
-const channelsListQuery=gql`query ChannelsListQuery { 
+export const channelsListQuery=gql`query ChannelsListQuery { 
   channels {
     id 
     name

@@ -3,23 +3,23 @@ import './App.css';
 import { ChannelsListWithData } from './components/ChannelsListWithData';
 import {
   ApolloClient, 
-  ApolloProvider
+  ApolloProvider,
+  createNetworkInterface,
 } from 'react-apollo';
 
-import {
-  makeExecutableSchema,
-  addMockFunctionsToSchema
-} from 'graphql-tools';
+const networkInterface = createNetworkInterface({
+  uri:'http://localhost:4000/graphql',
+});
 
-import { mockNetworkInterfaceWithSchema } from 'apollo-test-utils';
-import { typeDefs } from './schema';
+networkInterface.use([{
+  applyMiddleware(req,next){
+    setTimeout(next,1000);
+  },
+}]);
 
-const schema=makeExecutableSchema({typeDefs});
-addMockFunctionsToSchema({schema});
-
-const mockNetworkInterface=mockNetworkInterfaceWithSchema({schema});
-
-const client=new ApolloClient({networkInterface:mockNetworkInterface});
+const client=new ApolloClient({
+  networkInterface
+});
 
 class App extends Component {
   render() {
