@@ -1,4 +1,9 @@
 import React from 'react';
+
+import {
+  Link
+} from 'react-router-dom';
+
 import {
     gql,
     graphql,
@@ -16,7 +21,13 @@ function ChannelList({data: {loading,error,channels}}){
   return (
       <div className="channelsList">
           <AddChannelWithMutation/>
-         {channels.map(ch => <div className={'channel '+(ch.id < 0 ? 'optimistic': '')} key={ch.id}>{ch.name}</div>)}
+         {channels.map(ch => 
+          (<div className={'channel '+(ch.id < 0 ? 'optimistic': '')} key={ch.id}>
+               <Link to={ch.id <0 ? `/` : `channel/${ch.id}`}>
+                  {ch.name}
+                </Link>
+           </div>)
+           )}
       </div>
   );
 }

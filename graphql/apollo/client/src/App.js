@@ -1,10 +1,22 @@
 import React, { Component } from 'react';
+
+import {
+  BrowserRouter,
+  Link,
+  Route,
+  Switch,
+} from 'react-router-dom';
+
 import './App.css';
 import { ChannelsListWithData } from './components/ChannelsListWithData';
+import ChannelDetails from './components/ChannelDetails';
+import NotFound from './components/NotFound';
+
 import {
   ApolloClient, 
   ApolloProvider,
   createNetworkInterface,
+  toIdValue,
 } from 'react-apollo';
 
 const networkInterface = createNetworkInterface({
@@ -17,21 +29,35 @@ networkInterface.use([{
   },
 }]);
 
+function dataIdFromObject(result){
+  if(result.__typename && result.id !==undefined){
+      return `${result.__typename}:${result.id}`;
+  }
+  return null;
+}
+
 const client=new ApolloClient({
-  networkInterface
+  networkInterface,
+  dataIdFromObject,
 });
 
 class App extends Component {
   render() {
     return (
       <ApolloProvider client={client}>
-      <div className="App">
-        <div className="navbar"> React + GraphQL Tutorial</div>
-       <ChannelsListWithData />
-      </div>
+        <BrowserRouter>
+        <div className="App">
+          <Link to="/" className="navbar"> React + GraphQL Tutorial</Link>
+          <Switch>
+            <Route exact path="/" component={ChannelsListWithData} />
+            <Route path="/channel/:channelId" component={ChannelDetails}/>
+            <Route component={NotFound} />
+            <ChannelsListWithData />
+          </Switch>
+        </div>
+        </BrowserRouter>
       </ApolloProvider>
     );
   }
 }
-
 export default App;

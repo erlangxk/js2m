@@ -15,10 +15,10 @@ const AddChannel = ({mutate}) => {
                         __typename:'Channel',
                     },
                 },
-                update:(store,{data:{addChannel}})=>{
+                update:(store,{ data: { addChannel } }) => {
                     const data=store.readQuery({query:channelsListQuery});
                     data.channels.push(addChannel);
-                    store.writeQuery({query:channelsListQuery,data});
+                    store.writeQuery({ query:channelsListQuery,data });
                 },
             }).then(res =>evt.target.value = '');
         }
