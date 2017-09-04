@@ -5,8 +5,8 @@ import AddMessage from './AddMessage';
 function MessageList({ messages }){
     return (
         <div className="messagesList">
-            { messages.map(message=>
-                (<div key={message.id} className={'message ' + (message.id<0 ?'optimistic':'')}>{message.text}</div>))
+            { messages.map(m=>
+                (<div key={m.id} className={'message ' + (m.id<0 ?'optimistic':'')}>{m.text}</div>))
             }
             <AddMessage/>
         </div>
