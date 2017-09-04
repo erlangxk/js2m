@@ -19,8 +19,10 @@
     "body-parser": "^1.17.2",
     "cors": "^2.8.4",
     "express": "^4.15.4",
-    "graphql": "^0.11.1",
+    "graphql": "0.10.5",
     "graphql-server-express": "^1.1.2",
-    "graphql-tools": "^1.2.1"
+    "graphql-subscriptions": "^0.4.4",
+    "graphql-tools": "^1.2.1",
+    "subscriptions-transport-ws": "^0.8.2"
   }
 }
