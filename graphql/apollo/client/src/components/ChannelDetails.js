@@ -23,7 +23,7 @@ export const channelDetailsQuery=gql`
 
 function ChannelDetails({data:{loading,error,channel},match}){
     if(loading){
-        return <p>Loading...</p>
+        return <ChannelPreview channelId={match.params.channelId}/>
     }
     if(error){
         return <p>{error.message}</p>;
