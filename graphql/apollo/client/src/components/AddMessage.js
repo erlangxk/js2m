@@ -36,7 +36,9 @@ function AddMessage({mutate, match }){
                             channelId:match.params.channelId,
                         }
                     });
-                    data.channel.messages.push(addMessage);
+                    if(!data.channel.messages.find(msg=>msg.id ===addMessage.id)){
+                        data.channel.messages.push(addMessage);
+                    }
                     store.writeQuery({
                         query:channelDetailsQuery,
                         variables:{

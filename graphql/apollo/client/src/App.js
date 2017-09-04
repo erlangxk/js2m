@@ -11,6 +11,7 @@ import './App.css';
 import { ChannelsListWithData } from './components/ChannelsListWithData';
 import ChannelDetails from './components/ChannelDetails';
 import NotFound from './components/NotFound';
+import {SubscriptionClient, addGraphQLSubscriptions} from 'subscriptions-transport-ws';
 
 import {
   ApolloClient, 
@@ -29,6 +30,8 @@ networkInterface.use([{
   },
 }]);
 
+const wsClient = new SubscriptionClient('ws://localhost:4000/subscriptions',{reconnect:true});
+
 function dataIdFromObject(result){
   if(result.__typename && result.id !==undefined){
       return `${result.__typename}:${result.id}`;
@@ -36,8 +39,10 @@ function dataIdFromObject(result){
   return null;
 }
 
+const networkInterfaceWithSubscriptions =addGraphQLSubscriptions(networkInterface,wsClient);
+
 const client=new ApolloClient({
-  networkInterface,
+  networkInterface: networkInterfaceWithSubscriptions,
   dataIdFromObject,
   customResolvers:{
     Query:{
